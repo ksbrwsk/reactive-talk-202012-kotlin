@@ -21,7 +21,7 @@ import reactor.core.publisher.Mono
 @ContextConfiguration(classes = [PersonHandler::class, PersonRouter::class])
 internal class PersonHandlerTest(@Autowired var applicationContext: ApplicationContext) {
 
-    private val BASE_URL = "/api/people"
+    private val baseUrl = "/api/people"
 
     @MockkBean
     lateinit var personRepository: PersonRepository;
@@ -44,7 +44,7 @@ internal class PersonHandlerTest(@Autowired var applicationContext: ApplicationC
 
         this.webTestClient
             .get()
-            .uri(BASE_URL)
+            .uri(baseUrl)
             .exchange()
             .expectStatus()
             .is2xxSuccessful
@@ -63,7 +63,7 @@ internal class PersonHandlerTest(@Autowired var applicationContext: ApplicationC
 
         this.webTestClient
             .get()
-            .uri(BASE_URL + "/1")
+            .uri("$baseUrl/1")
             .exchange()
             .expectStatus()
             .is2xxSuccessful
@@ -79,7 +79,7 @@ internal class PersonHandlerTest(@Autowired var applicationContext: ApplicationC
 
         this.webTestClient
             .get()
-            .uri(BASE_URL + "/byName/Name")
+            .uri("$baseUrl/byName/Name")
             .exchange()
             .expectStatus()
             .is2xxSuccessful
@@ -97,7 +97,7 @@ internal class PersonHandlerTest(@Autowired var applicationContext: ApplicationC
 
         this.webTestClient
             .delete()
-            .uri(BASE_URL + "/1")
+            .uri("$baseUrl/1")
             .exchange()
             .expectStatus()
             .isOk
@@ -127,7 +127,7 @@ internal class PersonHandlerTest(@Autowired var applicationContext: ApplicationC
         every { personRepository.save(person) } returns personMono
         val result = webTestClient
             .post()
-            .uri(BASE_URL)
+            .uri(baseUrl)
             .body(BodyInserters.fromValue<Any>(person))
             .exchange()
             .expectStatus()

@@ -14,13 +14,13 @@ class PersonRouter {
         GET(baseUrl) {
             personHandler.handleFindAll(it)
         }
-        GET(baseUrl + "/{id}") {
+        GET("$baseUrl/{id}") {
             personHandler.handleFindById(it)
         }
-        DELETE(baseUrl + "/{id}") {
+        DELETE("$baseUrl/{id}") {
             personHandler.handleDeleteById(it)
         }
-        GET(baseUrl+"/byName/{name}") {
+        GET("$baseUrl/byName/{name}") {
             personHandler.handleFindFirstByName(it)
         }
         POST(baseUrl) {

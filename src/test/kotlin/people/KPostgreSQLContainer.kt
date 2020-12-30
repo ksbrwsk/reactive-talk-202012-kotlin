@@ -9,7 +9,6 @@ class KPostgreSQLContainer(image: String): PostgreSQLContainer<KPostgreSQLContai
 
     fun getR2dbcUrl(): String {
         val additionalUrlParams = constructUrlParameters("?", "&")
-        return ("r2dbc:postgresql://" + containerIpAddress + ":" + getMappedPort(POSTGRESQL_PORT)
-                + "/" + databaseName + additionalUrlParams)
+        return ("r2dbc:postgresql://$containerIpAddress:${getMappedPort(POSTGRESQL_PORT)}/$databaseName$additionalUrlParams")
     }
 }
