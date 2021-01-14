@@ -2,7 +2,7 @@ package people
 
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
-import org.springframework.web.reactive.function.server.router
+import org.springframework.web.reactive.function.server.coRouter
 
 @Configuration
 class PersonRouter {
@@ -10,21 +10,13 @@ class PersonRouter {
     val baseUrl = "api/people"
 
     @Bean
-    fun http(personHandler: PersonHandler) = router {
-        GET(baseUrl) {
-            personHandler.handleFindAll(it)
-        }
-        GET("$baseUrl/{id}") {
-            personHandler.handleFindById(it)
-        }
-        DELETE("$baseUrl/{id}") {
-            personHandler.handleDeleteById(it)
-        }
-        GET("$baseUrl/byName/{name}") {
-            personHandler.handleFindFirstByName(it)
-        }
-        POST(baseUrl) {
-            personHandler.handleSave(it)
+    fun http(personHandler: PersonHandler) = coRouter {
+        baseUrl.nest {
+            GET("") { personHandler.handleFindAll(it) }
+            GET("/{id}") { personHandler.handleFindById(it) }
+            GET("/byName/{name}") { personHandler.handleFindFirstByName(it) }
+            DELETE("/{id}") { personHandler.handleDeleteById(it) }
+            POST("") { personHandler.handleSave(it) }
         }
     }
 }

@@ -61,5 +61,3 @@ reactive-talk-202012.postman_collection.json
 * Unit Testing
 * Integration Testing with Testcontainers
 * Docker build/compose
-
-####TODO: Replace Mono/Flux data types with Kotlin Coroutines.

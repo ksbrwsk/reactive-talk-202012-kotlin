@@ -1,9 +1,8 @@
 package people
 
-import org.springframework.data.repository.reactive.ReactiveCrudRepository
-import reactor.core.publisher.Mono
+import org.springframework.data.repository.kotlin.CoroutineCrudRepository
 
-interface PersonRepository : ReactiveCrudRepository<Person, Long> {
+interface PersonRepository : CoroutineCrudRepository<Person, Long> {
 
-    fun findFirstByName(name: String): Mono<Person>
+    suspend fun findFirstByName(name: String): Person
 }

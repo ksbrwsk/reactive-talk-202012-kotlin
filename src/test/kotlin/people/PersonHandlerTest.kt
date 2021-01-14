@@ -1,32 +1,31 @@
 package people
 
-import com.ninjasquad.springmockk.MockkBean
-import io.mockk.every
+import kotlinx.coroutines.flow.flowOf
+import kotlinx.coroutines.runBlocking
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertNotNull
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
+import org.mockito.BDDMockito.given
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.web.reactive.WebFluxTest
+import org.springframework.boot.test.mock.mockito.MockBean
 import org.springframework.context.ApplicationContext
 import org.springframework.test.context.ContextConfiguration
 import org.springframework.test.web.reactive.server.WebTestClient
 import org.springframework.test.web.reactive.server.expectBody
-import org.springframework.web.reactive.function.BodyInserters
-import reactor.core.publisher.Flux
-import reactor.core.publisher.Mono
 
 @WebFluxTest
 @ContextConfiguration(classes = [PersonHandler::class, PersonRouter::class])
-internal class PersonHandlerTest(@Autowired var applicationContext: ApplicationContext) {
+class PersonHandlerTest(@Autowired var applicationContext: ApplicationContext) {
 
     private val baseUrl = "/api/people"
 
-    @MockkBean
-    lateinit var personRepository: PersonRepository;
-
     private lateinit var webTestClient: WebTestClient
+
+    @MockBean
+    lateinit var personRepository: PersonRepository;
 
     @BeforeEach
     fun setUp() {
@@ -36,81 +35,87 @@ internal class PersonHandlerTest(@Autowired var applicationContext: ApplicationC
     @Test
     @DisplayName("should handle request find all")
     fun should_handle_find_all() {
+        runBlocking {
+            val list = flowOf(Person(1L, "Name"), Person(2L, "Sabo"))
+            given(personRepository.findAll()).willReturn(list)
 
-        every { personRepository.findAll() } returns Flux.just(
-            Person(1L, "Name"),
-            Person(2L, "Sabo")
-        )
-
-        this.webTestClient
-            .get()
-            .uri(baseUrl)
-            .exchange()
-            .expectStatus()
-            .is2xxSuccessful
-            .expectBody()
-            .jsonPath("@.[0].name")
-            .isEqualTo("Name")
-            .jsonPath("@.[1].name")
-            .isEqualTo("Sabo")
+            webTestClient
+                .get()
+                .uri(baseUrl)
+                .exchange()
+                .expectStatus()
+                .is2xxSuccessful
+                .expectBody()
+                .jsonPath("@.[0].name")
+                .isEqualTo("Name")
+                .jsonPath("@.[1].name")
+                .isEqualTo("Sabo")
+        }
     }
 
     @Test
     @DisplayName("should handle find by id x")
     fun should_handle_find_by_id() {
+        runBlocking {
+            val expected = Person(1L, "Name")
+            given(personRepository.findById(1L)).willReturn(expected)
 
-        every { personRepository.findById(1L) } returns Mono.just(Person(1L, "Name"))
-
-        this.webTestClient
-            .get()
-            .uri("$baseUrl/1")
-            .exchange()
-            .expectStatus()
-            .is2xxSuccessful
-            .expectBody<Person>()
-            .isEqualTo(Person(1L, "Name"))
+            val actual = webTestClient
+                .get()
+                .uri("$baseUrl/1")
+                .exchange()
+                .expectStatus()
+                .is2xxSuccessful
+                .expectBody<Person>()
+                .returnResult()
+                .responseBody
+            assertEquals(expected, actual)
+        }
     }
 
     @Test
     @DisplayName("should handle find first by name x")
     fun should_handle_find_first_by_name() {
+        runBlocking {
+            val expected = Person(1L, "Name")
+            given(personRepository.findFirstByName("Name")).willReturn(expected)
 
-        every { personRepository.findFirstByName("Name") } returns Mono.just(Person(1L, "Name"))
-
-        this.webTestClient
-            .get()
-            .uri("$baseUrl/byName/Name")
-            .exchange()
-            .expectStatus()
-            .is2xxSuccessful
-            .expectBody<Person>()
-            .isEqualTo(Person(1L, "Name"))
+            val actual = webTestClient
+                .get()
+                .uri("$baseUrl/byName/Name")
+                .exchange()
+                .expectStatus()
+                .is2xxSuccessful
+                .expectBody<Person>()
+                .returnResult()
+                .responseBody
+            assertEquals(expected, actual)
+        }
     }
 
     @Test
     @DisplayName("should delete person by id x")
-    internal fun should_delete_person_by_id() {
+    fun should_delete_person_by_id() {
+        runBlocking {
+            val person = Person(1L, "Name")
+            given(personRepository.findById(1L)).willReturn(person)
 
-        val person = Person(1L, "Name")
-        every { personRepository.findById(1L) } returns Mono.just(person)
-        every { personRepository.delete(person) } returns Mono.empty();
-
-        this.webTestClient
-            .delete()
-            .uri("$baseUrl/1")
-            .exchange()
-            .expectStatus()
-            .isOk
-            .expectBody<String>()
-            .returnResult()
-            .responseBody
-            .equals("Deleted successfully!")
+            webTestClient
+                .delete()
+                .uri("$baseUrl/1")
+                .exchange()
+                .expectStatus()
+                .isOk
+                .expectBody<String>()
+                .returnResult()
+                .responseBody
+                .equals("Deleted successfully!")
+        }
     }
 
     @Test
     @DisplayName("should handle unknwon URL")
     fun should_handle_not_found() {
-
         this.webTestClient
             .get()
             .uri("/api/peple")
@@ -122,20 +127,22 @@ internal class PersonHandlerTest(@Autowired var applicationContext: ApplicationC
     @Test
     @DisplayName("should handle request save person")
     fun should_handle_save_person() {
-        val person = Person(1L, "Name")
-        val personMono = Mono.just(person)
-        every { personRepository.save(person) } returns personMono
-        val result = webTestClient
-            .post()
-            .uri(baseUrl)
-            .body(BodyInserters.fromValue<Any>(person))
-            .exchange()
-            .expectStatus()
-            .is2xxSuccessful
-            .expectBody<Person>()
-            .returnResult()
-            .responseBody
-        assertNotNull(result)
-        assertEquals(person, result)
+        runBlocking {
+            val expected = Person(1L, "Name")
+            given(personRepository.save(expected)).willReturn(expected)
+
+            val actual = webTestClient
+                .post()
+                .uri(baseUrl)
+                .bodyValue(expected)
+                .exchange()
+                .expectStatus()
+                .is2xxSuccessful
+                .expectBody<Person>()
+                .returnResult()
+                .responseBody
+            assertNotNull(actual)
+            assertEquals(expected, actual)
+        }
     }
 }
