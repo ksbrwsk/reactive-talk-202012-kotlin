@@ -39,13 +39,14 @@ class PersonHandler(val personRepository: PersonRepository) {
         log.info("Handle request ${serverRequest.methodName()} ${serverRequest.path()}")
         val id = serverRequest.pathVariable("id").toLong()
         val person = personRepository.findById(id)
-        person?.let {
-            personRepository.delete(it)
-            return ok()
-                .contentType(MediaType.APPLICATION_JSON)
-                .bodyValueAndAwait("Successfully deleted!")
+        return when {
+            person != null -> {
+                ok()
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .bodyValueAndAwait("Successfully deleted!")
+            }
+            else -> notFound().buildAndAwait()
         }
-        return notFound().buildAndAwait()
     }
 
     suspend fun handleSave(serverRequest: ServerRequest): ServerResponse {
