@@ -36,7 +36,7 @@ class PersonHandler(val personRepository: PersonRepository) {
     }
 
     suspend fun handleDeleteById(serverRequest: ServerRequest): ServerResponse {
-        log.info("Handle request ${serverRequest.methodName()}  ${serverRequest.path()}")
+        log.info("Handle request ${serverRequest.methodName()} ${serverRequest.path()}")
         val id = serverRequest.pathVariable("id").toLong()
         val person = personRepository.findById(id)
         person?.let {
