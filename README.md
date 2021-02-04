@@ -2,6 +2,8 @@
 
 #### Kotlin version of my demo code for Reactive Spring Talk 12/2020.
 
+![CI build](https://github.com/ksbrwsk/reactive-talk-202012-kotlin/workflows/CI%20build/badge.svg)
+
 **Prerequisites:**
 
 * [Java 15](https://adoptopenjdk.net/)
