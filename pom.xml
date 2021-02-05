@@ -10,13 +10,13 @@
 	</parent>
 	<groupId>de.ksbrwsk</groupId>
 	<artifactId>reactive-talk-202012-kotlin</artifactId>
-	<version>1.0.0</version>
+	<version>1.0.1-SNAPSHOT</version>
 	<name>reactive-talk-202012-kotlin</name>
 	<description>Reactive Kotlin example Webflux, R2DBC, Testcontainers</description>
 
 	<properties>
 		<java.version>15</java.version>
-		<kotlin.version>1.4.21</kotlin.version>
+		<kotlin.version>1.4.30</kotlin.version>
 		<testcontainers.version>1.15.1</testcontainers.version>
 	</properties>
 
