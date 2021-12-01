@@ -16,7 +16,7 @@
 
 	<properties>
 		<java.version>16</java.version>
-		<kotlin.version>1.5.31</kotlin.version>
+		<kotlin.version>1.6.0</kotlin.version>
 		<testcontainers.version>1.16.2</testcontainers.version>
 	</properties>
 
