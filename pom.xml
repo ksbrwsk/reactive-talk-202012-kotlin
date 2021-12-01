@@ -15,7 +15,7 @@
 	<description>Reactive Kotlin example Webflux, R2DBC, Testcontainers</description>
 
 	<properties>
-		<java.version>15</java.version>
+		<java.version>16</java.version>
 		<kotlin.version>1.5.31</kotlin.version>
 		<testcontainers.version>1.16.2</testcontainers.version>
 	</properties>
