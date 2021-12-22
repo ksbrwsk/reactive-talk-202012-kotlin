@@ -6,7 +6,7 @@
 
 **Prerequisites:**
 
-* [Java 16](https://adoptopenjdk.net/)
+* [Java 17](https://adoptopenjdk.net/)
 * [Apache Maven](https:http://maven.apache.org/)
 * [Docker](https://www.docker.com/)
 * Optional [Postman](https://www.postman.com/)
